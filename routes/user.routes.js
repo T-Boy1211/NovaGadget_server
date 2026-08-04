@@ -11,7 +11,7 @@ const payment = require('../controllers/payment.controller')
 const review = require('../controllers/review.controller')
 
 userRouter.post("/signup", verifyAuth, auth.userSignup);
-userRouter.post("/signin", verifyAuth, auth.userSignin);
+userRouter.post("/signin", auth.userSignin);
 userRouter.get("/:username", verification, profile.userProfile);
 userRouter.get("/myOrder", verification, order.myOrder);
 userRouter.post("/addOrder", verification, order.addToOrder);

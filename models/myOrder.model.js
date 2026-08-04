@@ -6,6 +6,11 @@ const myOrderSchema = mongoose.Schema(
     productIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true }],
     quantity: { type: Number, default: 1 },
     totalPrice: { type: Number, default: 0 },
+    status: {
+      type: String,
+      enum: ["Pending", "Delivered", "Cancelled"],
+      default: "Pending"
+    }
   },
   { timestamps: true },
 );

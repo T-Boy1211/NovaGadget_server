@@ -7,14 +7,6 @@ const userSchema = mongoose.Schema(
     email: { type: String, required: true, unique: true },
     phoneNumber: { type: Number, required: true, unique: true },
     role: { type: String, enum: ["user", "admin"], default: "user" },
-    // order: [
-    //   {
-    //     productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-    //     // name: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-    //     quantity: { type: Number, required: true, default: 1 },
-    //     totalPrice: { type: Number, required: true, default: 0 },
-    //   },
-    // ],
   },
   { timestamp: true },
 );

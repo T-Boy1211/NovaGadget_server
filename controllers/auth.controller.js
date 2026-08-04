@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt')
 const User = require("../models/user.model");
 const Admin = require("../models/admin.model");
-const sendEmil = require("../utils/mailer");
+const sendEmail = require("../utils/mailer");
 require("dotenv").config();
 
 // User Auth
@@ -26,8 +26,8 @@ exports.userSignup = async (req, res) => {
     });
 
     const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET);
+    await sendEmail( email, "userSignup", {fullName: user.fullName} );
     return res.status(200).json({ token, success: true, message: "Signup successfully" });
-    sendEmil({ email, template: userSignup, userData: full_name });
   } catch (error) {
     return res.status(500).json({ success: false, message: 'Server error' });
   }
@@ -48,8 +48,8 @@ exports.userSignin = async (req, res) => {
     }
 
     const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET);
+    await sendEmail( email, "userSignin", {fullName: user.fullName} );
     return res.status(200).json({ token, success: true, message: "Signin successfully" });
-    sendEmil({ email, template: userSignin, userData: full_name });
   } catch (error) {
     return res.status(500).json({ success: false, message: 'Server error' });
   }
@@ -76,8 +76,8 @@ exports.adminSignup = async (req, res) => {
     });
 
     const token = jwt.sign({ adminId: admin._id, role: admin.role }, process.env.JWT_SECRET);
+    await sendEmail( email, "adminSignup", {fullName: admin.fullName} );
     return res.status(200).json({ token, success: true, message: "Signup successful" });
-    sendEmil({ email, template: adminSignup, userData: full_name });
   } catch (error) {
     return res.status(500).json({ success: false, message: 'Server error' });
   }
@@ -98,9 +98,9 @@ exports.adminSignin = async (req, res) => {
     }
 
     const token = jwt.sign({ adminId: admin._id, role: admin.role }, process.env.JWT_SECRET);
+    await sendEmail( email, "adminSignin", {fullName: admin.fullName} );
     return res.status(200).json({ token, success: true, message: "Welcome Back" });
-    sendEmil({ email, template: adminSignin, userData: full_name });
   } catch (error) {
-    return res.status(500).json({ success: true, message: 'Server error' });
+    return res.status(500).json({ success: false, message: 'Server error' });
   }
 };
