@@ -1,37 +1,62 @@
 const WebSocket = require("ws");
 
-let wss;
+let wss = null;
 
 function initWebSocket(server) {
-  wss = new WebSocket.Server({ server });
+  console.log("Initializing WebSocket server...");
+
+  // Prevent creating multiple WebSocket servers
+  if (wss) {
+    console.log("WebSocket server already initialized");
+    return wss;
+  }
+
+  wss = new WebSocket.Server({server});
+
+  console.log("WebSocket server is ready");
 
   wss.on("connection", (socket) => {
-    console.log("Connected to WebSocket server");
+    console.log("Client connected to WebSocket server");
+
+    // socket.on("message", (message) => {
+    //   console.log("Received message:", message.toString());
+    // });
+
+    socket.on("close", () => {
+      console.log("Client disconnected from WebSocket server");
+    });
+
+    socket.on("error", (error) => {
+      console.error("WebSocket client error:", error);
+    });
   });
 
-  // ws.on('message', (message) => {
-  //   console.log('Received message:', message);
+  wss.on("error", (error) => {
+    console.error("WebSocket server error:", error);
+  });
+
+  // wss.on("close", () => {
+  //   console.log("WebSocket server closed");
+  //   wss = null;
   // });
 
-  wss.on("close", () => {
-    console.log("Client disconnected");
-    setTimeout(() => {
-      initWebSocket(server);
-    }, 1000); // Reconnect after 1 second
-  });
+  return wss;
 }
+
 
 function broadcast(data) {
   if (!wss) {
     console.error("WebSocket server is not initialized");
     return;
   }
+
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(data));
     }
   });
 }
+
 
 module.exports = {
   initWebSocket,

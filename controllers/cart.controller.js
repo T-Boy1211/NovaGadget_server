@@ -1,5 +1,6 @@
 const MyCart = require("../models/cart.model");
 const Product = require('../models/product.model')
+const { broadcast } = require("../ws")
 
 exports.addToCart = async (req, res) => {
   try {
@@ -17,6 +18,7 @@ exports.addToCart = async (req, res) => {
       totalPrice: product.price * quantity
     })
     
+    broadcas({ type: CART_ADDED, data: cart })
     return res.status(201).json({ cart, success: true })
   } catch (error) {
     return res.status(500).json({ success: false, message: 'Server error' })

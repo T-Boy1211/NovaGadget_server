@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
 const Admin = require("../models/admin.model");
 const sendEmail = require("../utils/mailer");
@@ -16,7 +16,7 @@ exports.userSignup = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Already have an account" });
     }
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
       fullName,
       password: hashedPassword,
@@ -25,11 +25,16 @@ exports.userSignup = async (req, res) => {
       role: "user",
     });
 
-    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET);
-    await sendEmail( email, "userSignup", {fullName: user.fullName} );
-    return res.status(200).json({ token, success: true, message: "Signup successfully" });
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+    );
+    await sendEmail(email, "userSignup", { fullName: user.fullName });
+    return res
+      .status(200)
+      .json({ token, success: true, message: "Signup successfully" });
   } catch (error) {
-    return res.status(500).json({ success: false, message: 'Server error' });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -44,14 +49,21 @@ exports.userSignin = async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ success: false, message: "Invalid credentials" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET);
-    await sendEmail( email, "userSignin", {fullName: user.fullName} );
-    return res.status(200).json({ token, success: true, message: "Signin successfully" });
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+    );
+    await sendEmail(email, "userSignin", { fullName: user.fullName });
+    return res
+      .status(200)
+      .json({ token, success: true, message: "Signin successfully" });
   } catch (error) {
-    return res.status(500).json({ success: false, message: 'Server error' });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -66,20 +78,25 @@ exports.adminSignup = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Already have an account" });
     }
-    const hashPassword = await bcrypt.hash(password, 10)
+    const hashPassword = await bcrypt.hash(password, 10);
     const admin = await Admin.create({
       fullName,
       password: hashPassword,
       email,
       phoneNumber,
-      role: "admin"
+      role: "admin",
     });
 
-    const token = jwt.sign({ adminId: admin._id, role: admin.role }, process.env.JWT_SECRET);
-    await sendEmail( email, "adminSignup", {fullName: admin.fullName} );
-    return res.status(200).json({ token, success: true, message: "Signup successful" });
+    const token = jwt.sign(
+      { adminId: admin._id, role: admin.role },
+      process.env.JWT_SECRET,
+    );
+    await sendEmail(email, "adminSignup", { fullName: admin.fullName });
+    return res
+      .status(200)
+      .json({ token, success: true, message: "Signup successful" });
   } catch (error) {
-    return res.status(500).json({ success: false, message: 'Server error' });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -94,13 +111,20 @@ exports.adminSignin = async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
-      return res.status(400).json({ success: false, message: "Invalid credentials" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ adminId: admin._id, role: admin.role }, process.env.JWT_SECRET);
-    await sendEmail( email, "adminSignin", {fullName: admin.fullName} );
-    return res.status(200).json({ token, success: true, message: "Welcome Back" });
+    const token = jwt.sign(
+      { adminId: admin._id, role: admin.role },
+      process.env.JWT_SECRET,
+    );
+    await sendEmail(email, "adminSignin", { fullName: admin.fullName });
+    return res
+      .status(200)
+      .json({ token, success: true, message: "Welcome Back" });
   } catch (error) {
-    return res.status(500).json({ success: false, message: 'Server error' });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
