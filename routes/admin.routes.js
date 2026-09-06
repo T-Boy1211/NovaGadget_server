@@ -20,6 +20,8 @@ adminRouter.get("/customersAddress", admin, verification, address.getAllAddress)
 adminRouter.get("/customersPayment", admin, verification, payment.getAllPayment);
 adminRouter.get("/customersReview", admin, verification, review.getAllReview);
 adminRouter.get("/customersOrder", admin, verification, order.customerOrder);
+adminRouter.get("/categorySales", admin, verification, order.salesByCategory);
+adminRouter.get("/monthlySales", admin, verification, order.monthlySales);
 adminRouter.get("/adminProducts", admin, verification, product.getAdminProducts);
 adminRouter.get("/admins", admin, verification, profile.admins);
 adminRouter.get("/myProducts", admin, verification, product.getAdminProducts);

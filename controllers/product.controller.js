@@ -17,7 +17,7 @@ exports.addProducts = async (req, res) => {
       brand,
       name,
       description,
-      price,  
+      price,
       features: features.split(",").map((feature) => {
         const [key, value] = feature.split(":");
         return { key: key.trim(), value: value.trim() };
@@ -25,7 +25,9 @@ exports.addProducts = async (req, res) => {
     });
 
     broadcast({ type: "PRODUCT_ADDED", data: product });
-    return res.status(201).json({ product, success: true, message: "Product added" });
+    return res
+      .status(201)
+      .json({ product, success: true, message: "Product added" });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
@@ -45,42 +47,25 @@ exports.getAllProducts = async (req, res) => {
     const products = await Product.find();
     return res.status(200).json({ products, success: true });
   } catch (error) {
-    return res.status(500).json({ success: false, message:  error.message });
-  }
-};
-
-exports.getProductByBrand = async (req, res) => {
-  try {
-    const product = await Product.find({ brand: req.brand });
-    if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
-    }
-    return res.status(200).json({ product, success: true });
-  } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
-exports.getProductByCategory = async (req, res) => {
+exports.searchProduct = async (req, res) => {
   try {
-    const product = await Product.find({ cartegory: req.category });
-    if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
-    }
-    return res.status(200).json({ product, success: true });
+    const { search } = req.query;
+
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: search, $options: "i" } },
+        { brand: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+      ],
+    });
+    res.status(200).json({ products, success: true });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
-exports.getProductByName = async (req, res) => {
-  try {
-    const product = await Product.find({ name: req.name });
-    if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
-    }
-    return res.status(200).json({ product, success: true });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
-  }
-};
+
